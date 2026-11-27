@@ -9,14 +9,46 @@ try {
 
 /* ---------- 1. DATA KOMPONEN ---------- */
 const parts = [
-  { id:'frame',   name:'Frame / Chassis', stepName:'Prepare Frame',          fn:'Structural shell that supports and aligns the internal modules.', instruction:'Place the chassis on the assembly base.',        target:'Frame Base',            color:0x5b6b7c, pos:[0,.08,0],        size:[2.6,.12,4.2] },
-  { id:'port',    name:'Charging Port',   stepName:'Install Charging Port',  fn:'Receives charging power and wired data connection.',            instruction:'Fit the charging port along the bottom edge.',  target:'Bottom Port Slot',      color:0x2d7a53, pos:[0,.17,1.65],     size:[.65,.12,.32] },
-  { id:'speaker', name:'Speaker',         stepName:'Install Speaker',        fn:'Converts electrical signals into sound.',                       instruction:'Install the speaker module in the lower bay.',  target:'Lower Speaker Bay',     color:0x2a2f36, pos:[0,.17,1.15],     size:[1.15,.12,.45] },
-  { id:'board',   name:'Motherboard',     stepName:'Install Motherboard',    fn:'Connects and coordinates the phone’s electronic systems.',      instruction:'Seat the motherboard in the center board bay.', target:'Main Board Bay',        color:0x1b5e3a, pos:[0,.17,-.05],     size:[2.15,.12,1.4] },
-  { id:'camera',  name:'Camera Module',   stepName:'Install Camera Module',  fn:'Captures light and converts it into image data.',               instruction:'Place the camera in the top camera bay.',       target:'Top Camera Bay',        color:0x232830, pos:[-1.02,.17,-1.45],size:[.8,.12,.68] },
-  { id:'battery', name:'Battery',         stepName:'Install Battery',        fn:'Stores energy and supplies power to the device.',               instruction:'Place the battery in the battery bay.',         target:'Battery Bay',           color:0x363d47, pos:[.35,.17,-.65],   size:[1.35,.12,1.6] },
-  { id:'display', name:'Display',         stepName:'Install Display',        fn:'Shows visual information and detects touch input.',             instruction:'Install the display as the front layer.',       target:'Front Display Position',color:0x14181f, pos:[0,.45,0],        size:[2.65,.12,4.15] },
-  { id:'cover',   name:'Back Cover',      stepName:'Install Back Cover',     fn:'Protects internal components and closes the phone body.',       instruction:'Attach the back cover as the final step.',      target:'Rear Cover Position',   color:0x2c3e50, pos:[0,.68,0],        size:[2.75,.12,4.25] }
+  { id:'frame',   name:'Frame / Chassis', stepName:'Prepare Frame',          fn:'Structural shell that supports and aligns the internal modules.', instruction:'Place the chassis on the assembly base.',        target:'Frame Base',            color:0x5b6b7c, pos:[0,.08,0],        size:[2.6,.12,4.2],
+    where:"The outermost internal layer. It forms the base of the phone and runs around all four edges.",
+    relation:"Holds every other part in place. The Display and Back Cover close it from front and back, and the port, speaker and button openings are cut into its walls.",
+    fact:"Many phone frames are CNC-milled from a single block of aluminium. The thin plastic lines in the frame let radio signals pass so the antennas can work.",
+    related:['board','display','cover'] },
+  { id:'port',    name:'Charging Port',   stepName:'Install Charging Port',  fn:'Receives charging power and wired data connection.',            instruction:'Fit the charging port along the bottom edge.',  target:'Bottom Port Slot',      color:0x2d7a53, pos:[0,.17,1.65],     size:[.65,.12,.32],
+    where:"Bottom edge of the phone, centered, lined up with the USB-C opening in the frame.",
+    relation:"Linked to the Motherboard by a flexible ribbon cable. Power flows through the board to the Battery, and data flows to the main processor.",
+    fact:"USB-C is reversible, so it fits either way up. One connector can carry power, data and even video.",
+    related:['board','battery','frame'] },
+  { id:'speaker', name:'Speaker',         stepName:'Install Speaker',        fn:'Converts electrical signals into sound.',                       instruction:'Install the speaker module in the lower bay.',  target:'Lower Speaker Bay',     color:0x2a2f36, pos:[0,.17,1.15],     size:[1.15,.12,.45],
+    where:"Lower bay of the phone, right next to the Charging Port, behind the grille holes in the bottom edge.",
+    relation:"Driven by audio circuits on the Motherboard. It shares the bottom openings of the Frame with the Charging Port.",
+    fact:"Sound escapes through tiny holes, so the sealed chamber behind the driver matters. A bigger chamber usually means fuller bass.",
+    related:['board','port','frame'] },
+  { id:'board',   name:'Motherboard',     stepName:'Install Motherboard',    fn:'Connects and coordinates the phone’s electronic systems.',      instruction:'Seat the motherboard in the center board bay.', target:'Main Board Bay',        color:0x1b5e3a, pos:[0,.17,-.05],     size:[2.15,.12,1.4],
+    where:"Center of the phone, between the lower speaker area and the top camera bay.",
+    relation:"The hub of the phone. It connects to the Battery (power), Display (image and touch), Camera Module (image data), Speaker and Charging Port.",
+    fact:"It carries the SoC, a single chip that combines the CPU, graphics and more. The whole board is only a few millimetres thick.",
+    related:['battery','display','camera','port','speaker'] },
+  { id:'camera',  name:'Camera Module',   stepName:'Install Camera Module',  fn:'Captures light and converts it into image data.',               instruction:'Place the camera in the top camera bay.',       target:'Top Camera Bay',        color:0x232830, pos:[-1.02,.17,-1.45],size:[.8,.12,.68],
+    where:"Top-left corner of the phone (top camera bay), lined up with the lens holes in the Back Cover.",
+    relation:"Sends image data to the Motherboard through a ribbon cable. Its lenses and the flash look out through the camera bump on the Back Cover.",
+    fact:"The sensor is usually only about a centimetre across or less, so phones combine several lenses with software processing.",
+    related:['board','cover'] },
+  { id:'battery', name:'Battery',         stepName:'Install Battery',        fn:'Stores energy and supplies power to the device.',               instruction:'Place the battery in the battery bay.',         target:'Battery Bay',           color:0x363d47, pos:[.35,.17,-.65],   size:[1.35,.12,1.6],
+    where:"Upper-center of the body. It is the largest single block inside the phone.",
+    relation:"Powers everything through the Motherboard. It is recharged through the Charging Port. A small protection board at one end monitors it.",
+    fact:"Phone batteries are lithium-ion polymer pouch cells. The protection circuit helps prevent overcharging and overheating.",
+    related:['board','port'] },
+  { id:'display', name:'Display',         stepName:'Install Display',        fn:'Shows visual information and detects touch input.',             instruction:'Install the display as the front layer.',       target:'Front Display Position',color:0x14181f, pos:[0,.45,0],        size:[2.65,.12,4.15],
+    where:"Front layer. It sits on top of all the internal parts and covers the whole front face.",
+    relation:"Receives picture data from the Motherboard through its ribbon cable. The front camera and earpiece sit along its top edge.",
+    fact:"A touchscreen does two jobs: it shows images, and it senses your finger through a grid of tiny electrodes.",
+    related:['board','frame','cover'] },
+  { id:'cover',   name:'Back Cover',      stepName:'Install Back Cover',     fn:'Protects internal components and closes the phone body.',       instruction:'Attach the back cover as the final step.',      target:'Rear Cover Position',   color:0x2c3e50, pos:[0,.68,0],        size:[2.75,.12,4.25],
+    where:"Rear face of the phone. It is the final layer, and its camera bump lines up with the Camera Module.",
+    relation:"Closes the Frame and protects the internal parts. Openings in it let the Camera Module see out.",
+    fact:"Glass back covers allow wireless charging, which thick metal backs would block.",
+    related:['frame','camera','display'] }
 ];
 parts.forEach((p, i) => { p.order = i; p.installed = false; });
 const byId = id => parts.find(p => p.id === id);
@@ -484,8 +516,19 @@ function build3D() {
 
   function returnHome(id) { const o = objs[id], i = byId(id).order; o.userData.goalPos.copy(homeOf(i)); o.userData.goalScale = HOME_SCALE; }
   let flipGoal = 0, pulse = 0;
+  let active = true;
   const api = {
     returnHome,
+    // Dipakai Component Explorer: bangun model baru dari fungsi shape() yang sama (tanpa duplikasi geometri)
+    makePart(id, withScreen) {
+      const g = shape(byId(id));
+      if (withScreen && id === 'display') {
+        const sc = new THREE.Mesh(new THREE.PlaneGeometry(2.24, 3.66), screenOn);
+        sc.rotation.x = -Math.PI / 2; sc.position.y = .056; sc.userData.sharedMat = true; g.add(sc);
+      }
+      return g;
+    },
+    setActive(v) { active = v; if (v) fit(); },
     snap(id) { const o = objs[id]; phone.attach(o); o.rotation.set(0, 0, 0); o.userData.goalPos = new THREE.Vector3(...byId(id).pos); o.userData.goalScale = 1; },
     reset() { parts.forEach((p, i) => { const o = objs[p.id]; scene.attach(o); o.rotation.set(0, 0, 0); o.userData.goalPos = homeOf(i); o.userData.goalScale = HOME_SCALE; }); },
     flash(id) { objs[id].userData.goalPos.y = .9; setTimeout(() => returnHome(id), 250); },
@@ -500,20 +543,221 @@ function build3D() {
     }
   };
   (function loop() {
-    requestAnimationFrame(loop); orbit.update(); pulse += .06;
+    requestAnimationFrame(loop); if (!active) return; orbit.update(); pulse += .06;
     parts.forEach(p => { const o = objs[p.id]; if (drag && drag.moved && drag.id === p.id) { o.scale.lerp(new THREE.Vector3(1, 1, 1), .2); return; } o.position.lerp(o.userData.goalPos, .16); o.scale.setScalar(o.scale.x + (o.userData.goalScale - o.scale.x) * .16); });
     phone.rotation.x += (flipGoal - phone.rotation.x) * .08;
     if (!state.complete) markers[parts[state.step].id].material.opacity = .45 + .2 * Math.sin(pulse);
     renderer.render(scene, camera);
   })();
-  addEventListener('resize', () => { camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); });
+  function fit() { if (!host.clientWidth || !host.clientHeight) return; camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); }
+  addEventListener('resize', fit);
   return api;
 }
 
-/* ---------- 6. INIT ---------- */
+/* ---------- 6. COMPONENT EXPLORER ----------
+   Memakai array `parts` yang sama (data) dan V.makePart() yang sama (geometri).
+   Tidak menyentuh `state` perakitan — hanya membacanya untuk menampilkan status. */
+const ex = { open:false, selected:parts[0].id, view:null, loc:null, raf:0, ready:false };
+
+function disposeGroup(g) {
+  g.traverse(o => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material && !o.userData.sharedMat) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose());
+  });
+}
+
+function createStage(host) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0d141d);
+  const camera = new THREE.PerspectiveCamera(38, 1, .05, 200);
+  const renderer = new THREE.WebGLRenderer({ antialias:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+  host.appendChild(renderer.domElement);
+  scene.add(new THREE.HemisphereLight(0xdbeafe, 0x263242, 1.8));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(6, 11, 7); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x7dd3fc, 1.1); rim.position.set(-7, 6, -6); scene.add(rim);
+  const fill = new THREE.DirectionalLight(0xffffff, .8); fill.position.set(0, -6, 4); scene.add(fill);
+  const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+  const resize = () => {
+    const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
+    camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h, false);
+  };
+  new ResizeObserver(resize).observe(host); resize();
+  return { scene, camera, renderer, controls, resize, frame() { controls.update(); renderer.render(scene, camera); } };
+}
+
+/* Viewer 3D besar: satu komponen, terfokus di tengah, bisa diputar & di-zoom */
+function createPartViewer(host) {
+  const st = createStage(host), { scene, camera, controls } = st;
+  controls.autoRotate = true; controls.autoRotateSpeed = 1.6;
+  let model = null, grid = null, radius = 1, spinCb = () => {};
+  controls.addEventListener('start', () => { if (controls.autoRotate) { controls.autoRotate = false; spinCb(false); } });
+  function fit() {
+    const vf = THREE.MathUtils.degToRad(camera.fov), hf = 2 * Math.atan(Math.tan(vf / 2) * camera.aspect);
+    const d = radius * 1.1 / Math.sin(Math.min(vf, hf) / 2);
+    camera.position.set(.55, .8, .95).normalize().multiplyScalar(d);
+    camera.near = d / 100; camera.far = d * 40; camera.updateProjectionMatrix();
+    controls.target.set(0, 0, 0); controls.minDistance = d * .3; controls.maxDistance = d * 3; controls.update();
+  }
+  return Object.assign(st, {
+    show(id) {
+      if (model) { scene.remove(model); disposeGroup(model); }
+      if (grid) { scene.remove(grid); disposeGroup(grid); }
+      model = V.makePart(id, true); scene.add(model);
+      const box = new THREE.Box3().setFromObject(model), c = box.getCenter(new THREE.Vector3());
+      radius = box.getSize(new THREE.Vector3()).length() / 2;
+      model.position.sub(c);
+      const size = Math.max(4, Math.ceil(radius * 4));
+      grid = new THREE.GridHelper(size, size * 2, 0x2a3d52, 0x182534);
+      grid.position.y = box.min.y - c.y - .03; scene.add(grid);
+      st.resize(); fit();
+    },
+    reset: fit,
+    setSpin(v) { controls.autoRotate = v; },
+    isSpinning() { return controls.autoRotate; },
+    onSpin(fn) { spinCb = fn; }
+  });
+}
+
+/* Locator: seluruh ponsel dalam posisi terpasang; komponen terpilih menyala, sisanya redup */
+function createLocator(host) {
+  const st = createStage(host), { scene, camera, controls } = st;
+  controls.enablePan = false; controls.minDistance = 6; controls.maxDistance = 18; controls.target.set(0, .3, 0);
+  camera.position.set(4.8, 7, 7.6); controls.update();
+  const flat = (c, o = {}) => new THREE.MeshStandardMaterial({ color:c, roughness:.8, metalness:.2, ...o });
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(3.3, .08, 5.2), flat(0x1e2c3a)); slab.position.y = -.1; scene.add(slab);
+  const grid = new THREE.GridHelper(12, 12, 0x2a3d52, 0x182534); grid.position.y = -.16; scene.add(grid);
+  const tag = (t, z) => {
+    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d');
+    x.font = 'bold 30px Arial'; x.textAlign = 'center'; x.fillStyle = '#7d93a8'; x.fillText(t, 128, 44);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(c), transparent:true, depthTest:false }));
+    sp.position.set(0, .15, z); sp.scale.set(1.6, .4, 1); scene.add(sp);
+  };
+  tag('TOP', -3.1); tag('BOTTOM', 3.1);
+
+  const groups = {};
+  parts.forEach(p => { const g = V.makePart(p.id); g.position.set(...p.pos); scene.add(g); groups[p.id] = g; });
+
+  const gold = 0xffd166, ARROW_Y = 1.5;
+  const marker = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color:gold, wireframe:true, transparent:true, opacity:.9, depthTest:false }));
+  const arrow = new THREE.Mesh(new THREE.ConeGeometry(.16, .4, 16), new THREE.MeshBasicMaterial({ color:gold }));
+  arrow.rotation.x = Math.PI;
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, 1, 8), new THREE.MeshBasicMaterial({ color:gold, transparent:true, opacity:.6 }));
+  marker.renderOrder = 10; scene.add(marker, arrow, beam);
+
+  let t = 0, glow = [];
+  return Object.assign(st, {
+    show(id) {
+      const p = byId(id); glow = [];
+      parts.forEach(q => groups[q.id].traverse(m => {
+        if (!m.isMesh) return;
+        const mt = m.material; mt.userData.base = mt.userData.base || { t:mt.transparent, o:mt.opacity };
+        if (q.id === id) { mt.transparent = mt.userData.base.t; mt.opacity = mt.userData.base.o; mt.depthWrite = true; mt.emissive?.set(0x2a7fa8); glow.push(mt); }
+        else { mt.transparent = true; mt.opacity = .13; mt.depthWrite = false; mt.emissive?.set(0x000000); }
+        mt.needsUpdate = true;
+      }));
+      marker.position.set(...p.pos); marker.scale.set(p.size[0] + .12, Math.max(p.size[1], .2) + .06, p.size[2] + .12);
+      arrow.position.set(p.pos[0], ARROW_Y, p.pos[2]);
+      const len = ARROW_Y - .2 - p.pos[1]; beam.scale.y = len; beam.position.set(p.pos[0], p.pos[1] + len / 2, p.pos[2]);
+    },
+    frame() {
+      t += .06; const k = Math.sin(t);
+      arrow.position.y = ARROW_Y + .1 * k; marker.material.opacity = .65 + .3 * k;
+      glow.forEach(m => { m.emissiveIntensity = .8 + .5 * k; });
+      controls.update(); st.renderer.render(scene, camera);
+    }
+  });
+}
+
+function buildExplorerList() {
+  const box = $('exList');
+  parts.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'ex-item'; b.dataset.id = p.id;
+    b.innerHTML = `<span class="number">${i + 1}</span><span class="part-name">${p.name}</span><span class="part-status"></span>`;
+    b.onclick = () => selectExplorerPart(p.id);
+    box.appendChild(b);
+  });
+}
+
+function updateExplorerList() {
+  document.querySelectorAll('#exList .ex-item').forEach(b => {
+    const sel = b.dataset.id === ex.selected;
+    b.classList.toggle('selected', sel); b.setAttribute('aria-pressed', sel);
+    const st = b.querySelector('.part-status'), done = state.installed.has(b.dataset.id);
+    st.textContent = done ? '✓ fitted' : ''; st.classList.toggle('done', done);
+  });
+  document.querySelector('#exList .ex-item.selected')?.scrollIntoView({ block:'nearest', inline:'center' });
+}
+
+function renderExplorerInfo() {
+  const p = byId(ex.selected), done = state.installed.has(p.id);
+  $('exBadge').textContent = `${p.order + 1} · ${p.name}`;
+  $('exLocCaption').textContent = `📍 ${p.target}`;
+  $('exInfo').innerHTML = `<h3>${p.name}</h3>
+    <div class="ex-sec"><span class="small-label">MAIN FUNCTION</span><p>${p.fn}</p></div>
+    <div class="ex-sec"><span class="small-label">LOCATION IN THE PHONE</span><p>${p.where}</p></div>
+    <div class="ex-sec"><span class="small-label">CONNECTED TO</span><p>${p.relation}</p><div class="ex-related" id="exRelated"></div></div>
+    <div class="ex-sec fact"><span class="small-label">DID YOU KNOW?</span><p>${p.fact}</p></div>
+    <div class="ex-sec"><span class="small-label">IN YOUR ASSEMBLY</span><p>Step ${p.order + 1} of ${parts.length} · ${done ? '✓ Already installed' : 'Not installed yet'}</p></div>`;
+  p.related.forEach(rid => {
+    const b = document.createElement('button'); b.className = 'chip'; b.textContent = byId(rid).name;
+    b.onclick = () => selectExplorerPart(rid); $('exRelated').appendChild(b);
+  });
+}
+
+function selectExplorerPart(id) {
+  ex.selected = id;
+  updateExplorerList(); renderExplorerInfo();
+  ex.view?.show(id); ex.loc?.show(id);
+}
+
+function updateSpinBtn(on) { $('exSpin').textContent = 'Auto-rotate: ' + (on ? 'On' : 'Off'); }
+
+function ensureExplorer() {
+  if (ex.ready) return; ex.ready = true;
+  if (!V) { $('exViewerMsg').textContent = '3D view unavailable — component information is still available.'; $('exLocMsg').textContent = '3D view unavailable.'; return; }
+  try {
+    ex.view = createPartViewer($('exViewer')); ex.view.onSpin(updateSpinBtn); updateSpinBtn(true); $('exViewerMsg').remove();
+    ex.loc = createLocator($('exLocator')); $('exLocMsg').remove();
+  } catch (e) {
+    console.error(e);
+    $('exViewerMsg')?.replaceChildren('3D view failed — component information is still available.');
+  }
+}
+
+function exTick() {
+  if (!ex.open) { ex.raf = 0; return; }
+  ex.raf = requestAnimationFrame(exTick);
+  ex.view?.frame(); ex.loc?.frame();
+}
+
+/* Pindah mode — state perakitan tidak disentuh, loop 3D yang tidak tampil dihentikan */
+function setMode(mode) {
+  const toEx = mode === 'explorer';
+  if (toEx === ex.open) return;
+  ex.open = toEx;
+  $('assemblyView').hidden = toEx; $('explorerView').hidden = !toEx; $('restartBtn').hidden = toEx;
+  [['tabAssembly', !toEx], ['tabExplorer', toEx]].forEach(([id, on]) => { $(id).classList.toggle('active', on); $(id).setAttribute('aria-selected', on); });
+  V?.setActive(!toEx);
+  if (toEx) {
+    ensureExplorer(); selectExplorerPart(ex.selected);
+    if (!ex.raf) ex.raf = requestAnimationFrame(exTick);
+  }
+  scrollTo({ top:0 });
+}
+
+/* ---------- 7. INIT ---------- */
 $('installBtn').onclick = () => tryInstall(state.selected, state.target);
 $('restartBtn').onclick = restart;
 $('powerBtn').onclick = togglePower;
 if (THREE) { try { V = build3D(); } catch (e) { console.error(e); V = null; $('sceneMsg') && ($('sceneMsg').textContent = '3D view failed — use the panels below to assemble.'); } }
 else $('sceneMsg').innerHTML = '3D view unavailable (Three.js could not load).<br>You can still assemble using the Parts Tray and Slot buttons.';
 render();
+buildExplorerList();
+$('tabAssembly').onclick = () => setMode('assembly');
+$('tabExplorer').onclick = () => setMode('explorer');
+$('backBtn').onclick = () => setMode('assembly');
+$('exReset').onclick = () => ex.view?.reset();
+$('exSpin').onclick = () => { if (ex.view) { ex.view.setSpin(!ex.view.isSpinning()); updateSpinBtn(ex.view.isSpinning()); } };

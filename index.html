@@ -12,9 +12,13 @@
 <body>
 <header class="topbar">
   <div><span class="eyebrow">INTERACTIVE HARDWARE WORKSHOP</span><h1>PHONE <b>ASSEMBLY</b> LAB</h1></div>
+  <nav class="mode-tabs" role="tablist" aria-label="Mode">
+    <button id="tabAssembly" class="mode-tab active" role="tab" aria-selected="true">🔧 Assembly Workbench</button>
+    <button id="tabExplorer" class="mode-tab" role="tab" aria-selected="false">🔍 Component Explorer</button>
+  </nav>
   <div class="top-actions"><span id="assemblyBadge" class="badge">ASSEMBLY IN PROGRESS</span><button id="restartBtn" class="btn secondary">↺ Restart Assembly</button></div>
 </header>
-<main class="layout">
+<main class="layout" id="assemblyView">
   <section class="workbench panel">
     <div class="section-head"><div><h2>Assembly Workbench</h2><p>Drag a part onto its slot, or select a part + slot and press Install.</p></div><span class="hint">Rotate: drag empty space · Zoom: scroll</span></div>
     <div id="scene"><div id="sceneMsg" class="scene-msg">Loading 3D view…</div></div>
@@ -34,6 +38,27 @@
     <section class="panel"><div class="section-head compact"><h2>Parts Tray</h2><span id="partsRemaining" class="muted">8 remaining</span></div><div id="componentList" class="component-list"></div></section>
     <section class="panel"><h2>Part Details</h2><div id="componentInfo" class="info-box"></div></section>
     <section class="panel"><h2>Final Test</h2><button id="powerBtn" class="btn power" disabled>⏻ Power On</button><p id="powerMessage" class="power-message">Finish installing all parts to enable.</p></section>
+  </aside>
+</main>
+<main class="explorer" id="explorerView" hidden>
+  <section class="panel ex-head">
+    <div><h2>Component Explorer</h2><p>Pick a part to inspect it in 3D. No assembly needed — your assembly progress stays untouched.</p></div>
+    <button id="backBtn" class="btn secondary">← Back to Assembly Workbench</button>
+  </section>
+  <aside class="panel ex-listpanel"><h2>Components</h2><div id="exList" class="ex-list"></div></aside>
+  <section class="panel ex-stage">
+    <div id="exViewer" class="ex-viewer">
+      <div id="exViewerMsg" class="scene-msg">Loading 3D view…</div>
+      <div id="exBadge" class="ex-badge"></div>
+      <div class="ex-tools"><button id="exReset" class="mini">⟲ Reset view</button><button id="exSpin" class="mini">Auto-rotate: On</button></div>
+    </div>
+    <p class="hint ex-hint">Rotate: drag · Zoom: scroll or pinch · Pan: right-drag or two fingers</p>
+  </section>
+  <aside class="ex-side">
+    <section class="panel"><h2>Location in the phone</h2>
+      <div id="exLocator" class="ex-locator"><div id="exLocMsg" class="scene-msg">Loading…</div><div id="exLocCaption" class="ex-caption"></div></div>
+      <p class="hint ex-hint">Highlighted = selected part. Drag to rotate.</p></section>
+    <section class="panel"><div id="exInfo" class="info-box" aria-live="polite"></div></section>
   </aside>
 </main>
 <footer>PHONE ASSEMBLY LAB · STAGE 1</footer>
