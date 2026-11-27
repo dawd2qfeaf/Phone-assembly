@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHONE ASSEMBLY LAB</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">INTERACTIVE HARDWARE WORKSHOP</p>
+      <h1>PHONE ASSEMBLY LAB</h1>
+    </div>
+    <div class="top-actions">
+      <span id="assemblyBadge" class="badge">ASSEMBLY IN PROGRESS</span>
+      <button id="restartBtn" class="button secondary">Restart Assembly</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="workbench panel">
+      <div class="panel-heading">
+        <div><h2>Assembly Workbench</h2><p>Select a part, then click its matching installation target.</p></div>
+        <div class="view-hint">Drag to rotate · Scroll to zoom</div>
+      </div>
+      <div id="scene" aria-label="3D assembly workbench"></div>
+      <div class="scene-legend">
+        <span><i class="dot part"></i> Loose component</span>
+        <span><i class="dot target"></i> Installation target</span>
+        <span><i class="dot installed"></i> Installed</span>
+      </div>
+      <div id="feedback" class="feedback" role="status">Choose the Frame / Chassis to begin.</div>
+    </section>
+
+    <aside class="sidebar">
+      <section class="panel progress-panel">
+        <div class="panel-heading compact"><h2>Assembly Progress</h2><span id="progressCount">0 / 8</span></div>
+        <div class="progress-track"><div id="progressFill"></div></div>
+        <div class="progress-meta"><span id="progressPercent">0%</span><span id="progressStatus">In progress</span></div>
+        <div class="step-card">
+          <span class="step-label">CURRENT STEP</span>
+          <strong id="stepTitle">1. Prepare Frame</strong>
+          <p id="stepInstruction">Install the Frame / Chassis onto the main base target.</p>
+        </div>
+      </section>
+
+      <section class="panel component-panel">
+        <div class="panel-heading compact"><h2>Components</h2><span id="partsRemaining">8 remaining</span></div>
+        <div id="componentList" class="component-list"></div>
+      </section>
+
+      <section class="panel info-panel">
+        <h2>Component Information</h2>
+        <div id="componentInfo" class="component-info">
+          <p class="muted">Select a component to see its function and installation instructions.</p>
+        </div>
+      </section>
+
+      <section class="panel power-panel">
+        <h2>Final Check</h2>
+        <button id="powerBtn" class="button power" disabled>⏻ Power On</button>
+        <div id="powerMessage" class="power-message">Complete the assembly to enable power.</div>
+      </section>
+    </aside>
+  </main>
+  <footer>PHONE ASSEMBLY LAB · Stage 1 — Functional prototype</footer>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
