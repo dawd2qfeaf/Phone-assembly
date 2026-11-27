@@ -1,23 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PHONE ASSEMBLY LAB</title><link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PHONE ASSEMBLY LAB</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
 </head>
 <body>
-<header class="topbar"><div><span class="eyebrow">INTERACTIVE HARDWARE WORKSHOP</span><h1>PHONE ASSEMBLY LAB</h1></div><div class="top-actions"><span id="assemblyBadge" class="badge">ASSEMBLY IN PROGRESS</span><button id="restartBtn" class="btn secondary">↺ Restart</button></div></header>
+<header class="topbar">
+  <div><span class="eyebrow">INTERACTIVE HARDWARE WORKSHOP</span><h1>PHONE <b>ASSEMBLY</b> LAB</h1></div>
+  <div class="top-actions"><span id="assemblyBadge" class="badge">ASSEMBLY IN PROGRESS</span><button id="restartBtn" class="btn secondary">↺ Restart Assembly</button></div>
+</header>
 <main class="layout">
-<section class="workbench panel">
- <div class="section-head"><div><h2>Assembly Workbench</h2><p>Phone body is in the center. Parts waiting to be installed are on the tray.</p></div><span class="hint">Rotate: drag · Zoom: scroll</span></div>
- <div id="scene"></div>
- <div class="legend"><span><i class="key loose"></i>Loose part</span><span><i class="key target"></i>Active target</span><span><i class="key fitted"></i>Installed</span></div>
- <div id="feedback" class="feedback">Start by selecting <b>Frame / Chassis</b> from the component list.</div>
- <div class="install-controls"><div class="selection-summary"><span class="small-label">SELECTED PART</span><strong id="selectedLabel">None</strong><span class="small-label">TARGET</span><strong id="targetLabel">Frame base</strong></div><button id="installBtn" class="btn primary" disabled>Install Selected Part →</button></div>
-</section>
-<aside class="sidebar">
- <section class="panel progress-panel"><div class="section-head compact"><h2>Progress</h2><strong id="progressCount">0 / 8</strong></div><div class="progress-track"><div id="progressFill"></div></div><div class="progress-meta"><span id="progressPercent">0%</span><span id="progressStatus">In progress</span></div><div class="step-box"><span class="small-label">CURRENT STEP</span><strong id="stepTitle">1 — Prepare Frame</strong><p id="stepInstruction">Install the frame onto the main base.</p></div></section>
- <section class="panel"><div class="section-head compact"><h2>Parts Tray</h2><span id="partsRemaining" class="muted">8 parts</span></div><div id="componentList" class="component-list"></div></section>
- <section class="panel"><h2>Part Details</h2><div id="componentInfo" class="info-box"><p class="muted">Select a part to view its purpose and instructions.</p></div></section>
- <section class="panel power-panel"><h2>Final Test</h2><button id="powerBtn" class="btn power" disabled>⏻ Power On</button><p id="powerMessage" class="power-message">Finish installing all parts to enable.</p></section>
-</aside></main><footer>PHONE ASSEMBLY LAB · FUNCTIONAL PROTOTYPE</footer>
-<script type="module" src="script.js"></script></body></html>
+  <section class="workbench panel">
+    <div class="section-head"><div><h2>Assembly Workbench</h2><p>Drag a part onto its slot, or select a part + slot and press Install.</p></div><span class="hint">Rotate: drag empty space · Zoom: scroll</span></div>
+    <div id="scene"><div id="sceneMsg" class="scene-msg">Loading 3D view…</div></div>
+    <div class="legend"><span><i class="key loose"></i>Loose part</span><span><i class="key target"></i>Active slot</span><span><i class="key pick"></i>Chosen slot</span><span><i class="key fitted"></i>Installed</span></div>
+    <div id="feedback" class="feedback">Start by selecting <b>Frame / Chassis</b>.</div>
+    <div class="slot-block"><span class="small-label">INSTALL TARGET (slot)</span><div id="targetList" class="target-list"></div></div>
+    <div class="install-controls">
+      <div class="selection-summary"><span class="small-label">PART</span><strong id="selectedLabel">None</strong><span class="small-label">SLOT</span><strong id="targetLabel">None</strong></div>
+      <button id="installBtn" class="btn primary" disabled>Install Selected Part →</button>
+    </div>
+  </section>
+  <aside class="sidebar">
+    <section class="panel"><div class="section-head compact"><h2>Progress</h2><strong id="progressCount">0 / 8</strong></div>
+      <div class="progress-track"><div id="progressFill"></div></div>
+      <div class="progress-meta"><span id="progressPercent">0%</span><span id="progressStatus">Assembly in Progress</span></div>
+      <div class="step-box"><span class="small-label">CURRENT STEP</span><strong id="stepTitle"></strong><p id="stepInstruction"></p></div></section>
+    <section class="panel"><div class="section-head compact"><h2>Parts Tray</h2><span id="partsRemaining" class="muted">8 remaining</span></div><div id="componentList" class="component-list"></div></section>
+    <section class="panel"><h2>Part Details</h2><div id="componentInfo" class="info-box"></div></section>
+    <section class="panel"><h2>Final Test</h2><button id="powerBtn" class="btn power" disabled>⏻ Power On</button><p id="powerMessage" class="power-message">Finish installing all parts to enable.</p></section>
+  </aside>
+</main>
+<footer>PHONE ASSEMBLY LAB · STAGE 1</footer>
+<script type="module" src="script.js"></script>
+</body>
+</html>
