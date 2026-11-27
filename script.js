@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
 const componentData = [
   { id:'frame', name:'Frame / Chassis', function:'The structural body that supports and aligns all internal parts.', instruction:'Place the chassis on the main assembly base.', targetId:'frame-slot', order:0, color:0x60758a, shape:'frame' },
@@ -54,11 +55,11 @@ function addBox(parent,name,size,pos,color,opts={}){
   mesh.position.set(...pos); mesh.name=name; mesh.castShadow=true; mesh.receiveShadow=true; parent.add(mesh); return mesh;
 }
 function addTarget(id,label,pos,size){
-  const target = new THREE.Mesh(new THREE.BoxGeometry(...size),new THREE.MeshBasicMaterial({color:0x6bd4ff,transparent:true,opacity:.12,wireframe:true}));
-  target.position.set(...pos); target.userData.targetId=id; target.userData.label=label; root.add(target);
+  const target = new THREE.Mesh(new THREE.BoxGeometry(...size),new THREE.MeshBasicMaterial({color:0x6bd4ff,transparent:true,opacity:.28,wireframe:true}));
+  target.position.set(...pos); target.userData.targetId=id; target.userData.label=label; target.visible=false; root.add(target);
   slotObjects.set(id,target); targetToSlot.set(target,id);
   const dot = new THREE.Mesh(new THREE.SphereGeometry(.075,12,12),material(0x6bd4ff));
-  dot.position.set(pos[0],pos[1]+.12,pos[2]); dot.userData.targetId=id; root.add(dot); targetToSlot.set(dot,id);
+  dot.position.set(pos[0],pos[1]+.22,pos[2]); dot.userData.targetId=id; dot.visible=false; root.add(dot); targetToSlot.set(dot,id); targetDots.set(id,dot);
 }
 function createWorkbench(){
   // A shallow tray and main chassis target area
@@ -75,7 +76,7 @@ function createWorkbench(){
   addTarget('cover-slot','Back Cover',[0,.2,0],[3.45,.12,4.55]);
   // loose parts displayed in a row to the right of phone
   componentData.forEach((c,i)=>{
-    const x=4.2, z=2.7-i*.72;
+    const x=4.55, z=3.0-i*.86;
     const mesh=createPartMesh(c);
     mesh.position.set(x,.25,z);
     mesh.userData.componentId=c.id;
@@ -112,7 +113,7 @@ function addTextSprite(text,pos){
   const tex=new THREE.CanvasTexture(canvas); const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
   sprite.scale.set(3,0.75,1); sprite.position.set(...pos); root.add(sprite);
 }
-function animate(){animationFrame=requestAnimationFrame(animate); renderer.render(scene,camera);}
+function animate(){animationFrame=requestAnimationFrame(animate); if(controls) controls.update(); renderer.render(scene,camera);}
 function resizeRenderer(){const host=$('scene'); if(!renderer)return; camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth,host.clientHeight);}
 function onScenePointer(e){
   const rect=renderer.domElement.getBoundingClientRect(); pointer.x=((e.clientX-rect.left)/rect.width)*2-1; pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
@@ -146,7 +147,7 @@ function attemptInstallAt(targetId){
   if(state.complete){setFeedback('Assembly is complete. Use Restart Assembly to begin again.','error');return;}
   const current=componentData[state.currentStep];
   if(c.order!==state.currentStep){setFeedback(`Wrong step. Current task: ${current.name}. Install components in the displayed sequence.`, 'error');return;}
-  if(c.targetId!==targetId){setFeedback(`Incorrect target for ${c.name}. Try its highlighted target: ${c.targetId.replace('-slot','').replaceAll('-',' ')}.`, 'error');return;}
+  if(c.targetId!==targetId){setFeedback(`Incorrect target for ${c.name}. Try the glowing target marker for this component.`, 'error');return;}
   // Validate component identity, intended target, and active sequence.
   state.installedIds.add(c.id);
   state.selectedComponentId=null;
@@ -218,7 +219,7 @@ function powerOn(){
   setFeedback(state.poweredOn?'Phone is now powered on!':'Phone powered off.', 'success');
 }
 function restart(){
-  state.currentStep=0;state.selectedComponentId=null;state.installedIds.clear();state.complete=false;state.poweredOn=false;
+  state.currentStep=0;state.selectedComponentId='frame';state.installedIds.clear();state.complete=false;state.poweredOn=false; focusTarget('frame');
   componentData.forEach(c=>{
     const obj=partObjects.get(c.id); obj.position.set(4.2,.25,2.7-c.order*.72);obj.rotation.set(0,0,0);obj.scale.set(1,1,1);obj.userData.installed=false;
     obj.traverse(child=>{if(child.isMesh && child.material){child.material.color.setHex(c.color);child.material.transparent=false;child.material.opacity=1;}});
@@ -229,4 +230,4 @@ function restart(){
 }
 $('restartBtn').addEventListener('click',restart);
 $('powerBtn').addEventListener('click',powerOn);
-init3D();renderUI();
+init3D(); state.selectedComponentId='frame'; focusTarget('frame'); renderUI(); setFeedback('Langkah 1: pilih Frame / Chassis, lalu klik target bercahaya di area assembly.');
